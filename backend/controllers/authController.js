@@ -170,7 +170,7 @@ exports.signup = async (req, res) => {
 // Login (all roles)
 exports.login = async (req, res) => {
   try {
-    const { email, password, isAdminLogin = false } = req.body;
+    const { email, password, allowUidLogin = true } = req.body;
     
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
@@ -178,14 +178,36 @@ exports.login = async (req, res) => {
     
     // Normalize email (trim whitespace and convert to lowercase)
     const normalizedEmail = email.trim().toLowerCase();
+    const normalizedInput = email.trim();
     
     let user;
     
-    if (isAdminLogin) {
-      // Admin login: only search by email
-      user = await User.findOne({ 
-        email: normalizedEmail,
-        role: { $in: ['admin', 'superadmin'] }
+    // First, try to find admin by email only
+    const adminUser = await User.findOne({ 
+      email: normalizedEmail,
+      role: { $in: ['admin', 'superadmin'] }
+    })
+      .populate({
+        path: 'roleAssignments.school roleAssignments.schools',
+        select: 'name code'
+      })
+      .populate({
+        path: 'roleAssignments.departments',
+        select: 'name code school'
+      });
+
+    if (adminUser) {
+      // Admin found, use admin user
+      user = adminUser;
+    } else if (allowUidLogin) {
+      // Not admin, search by email OR UID for other roles
+      user = await User.findOne({
+        $or: [
+          { email: normalizedEmail },
+          { regNo: normalizedInput },  // Student UID
+          { teacherId: normalizedInput } // Teacher UID
+        ],
+        role: { $nin: ['admin', 'superadmin'] } // Exclude admin roles from UID login
       })
         .populate({
           path: 'roleAssignments.school roleAssignments.schools',
@@ -196,14 +218,10 @@ exports.login = async (req, res) => {
           select: 'name code school'
         });
     } else {
-      // Non-admin login: search by email OR UID (regNo for students, teacherId for teachers)
+      // Only allow email-based login
       user = await User.findOne({
-        $or: [
-          { email: normalizedEmail },
-          { regNo: email.trim() },  // Student UID
-          { teacherId: email.trim() } // Teacher UID
-        ],
-        role: { $nin: ['admin', 'superadmin'] } // Exclude admin roles from UID login
+        email: normalizedEmail,
+        role: { $nin: ['admin', 'superadmin'] }
       })
         .populate({
           path: 'roleAssignments.school roleAssignments.schools',
@@ -216,11 +234,9 @@ exports.login = async (req, res) => {
     }
     
     if (!user) {
-      if (isAdminLogin) {
-        return res.status(400).json({ message: 'Invalid admin credentials. Please check your email address.' });
-      } else {
-        return res.status(400).json({ message: 'Invalid credentials. Please check your email address or UID.' });
-      }
+      return res.status(400).json({ 
+        message: 'Invalid credentials. Please check your email address' + (allowUidLogin ? ' or UID' : '') + '.' 
+      });
     }
     
     const isMatch = await bcrypt.compare(password, user.password);

@@ -11,7 +11,6 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isAdminLogin, setIsAdminLogin] = useState(false);
   const navigate = useNavigate();
   
   // Check if user is already logged in
@@ -52,7 +51,9 @@ const LoginPage = () => {
     setLoading(true);
     
     try {
-      const result = await loginUser(email, password, isAdminLogin);
+      // For all users: allow both email and UID login
+      // The backend will handle the logic to restrict admin to email-only
+      const result = await loginUser(email, password, true);
       
       if (!result.success) {
         setError(result.error);
@@ -314,13 +315,8 @@ const LoginPage = () => {
             )}
             
             <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-              {/* Admin Toggle Button */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-                
-              </Box>
-
               <TextField
-                label={isAdminLogin ? "Email Address" : "Email Address or UID"}
+                label="Email Address or UID"
                 type="text"
                 fullWidth
                 margin="normal"
@@ -329,8 +325,8 @@ const LoginPage = () => {
                 required
                 autoFocus
                 disabled={loading}
-                placeholder={isAdminLogin ? "Enter your email address" : "Enter your email or user ID"}
-                helperText={isAdminLogin ? "Admin login requires email address only" : "You can login using either your email address or UID"}
+                placeholder="Enter your email address or user ID"
+                helperText="You can login using either your email address or UID"
                 sx={{
                   mb: 2,
                   '& .MuiOutlinedInput-root': {
