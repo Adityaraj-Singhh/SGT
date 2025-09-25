@@ -11,6 +11,7 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isAdminLogin, setIsAdminLogin] = useState(false);
   const navigate = useNavigate();
   
   // Check if user is already logged in
@@ -51,7 +52,7 @@ const LoginPage = () => {
     setLoading(true);
     
     try {
-      const result = await loginUser(email, password);
+      const result = await loginUser(email, password, isAdminLogin);
       
       if (!result.success) {
         setError(result.error);
@@ -267,7 +268,7 @@ const LoginPage = () => {
               <Typography
                 variant="h4"
                 sx={{
-                  fontWeight: 700,
+                  fontWeight: 750,
                   color: '#1a237e',
                   letterSpacing: 0.5,
                   textAlign: 'center',
@@ -275,7 +276,7 @@ const LoginPage = () => {
                   mb: 1
                 }}
               >
-                University Management
+                University Management System
               </Typography>
               <Typography
                 variant="h6"
@@ -285,7 +286,7 @@ const LoginPage = () => {
                   textAlign: 'center',
                 }}
               >
-                System
+          
               </Typography>
             </Box>
             
@@ -313,8 +314,13 @@ const LoginPage = () => {
             )}
             
             <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+              {/* Admin Toggle Button */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                
+              </Box>
+
               <TextField
-                label="Email Address or UID"
+                label={isAdminLogin ? "Email Address" : "Email Address or UID"}
                 type="text"
                 fullWidth
                 margin="normal"
@@ -323,8 +329,8 @@ const LoginPage = () => {
                 required
                 autoFocus
                 disabled={loading}
-                placeholder="Enter your email or user ID"
-                helperText="You can login using either your email address or UID"
+                placeholder={isAdminLogin ? "Enter your email address" : "Enter your email or user ID"}
+                helperText={isAdminLogin ? "Admin login requires email address only" : "You can login using either your email address or UID"}
                 sx={{
                   mb: 2,
                   '& .MuiOutlinedInput-root': {

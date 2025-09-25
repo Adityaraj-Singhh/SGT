@@ -46,6 +46,7 @@ import QuizAnalytics from './teacher/QuizAnalytics';
 import TeacherSections from '../components/teacher/TeacherSections';
 import TeacherSectionAnalytics from '../components/teacher/TeacherSectionAnalytics';
 import TeacherProfile from '../components/TeacherProfile';
+import MyProfile from './common/MyProfile';
 import TeacherAnnouncementHistory from '../components/teacher/TeacherAnnouncementHistory';
 import TeacherCCManagement from './teacher/TeacherCCManagement';
 import QuizUnlockDashboard from '../components/teacher/QuizUnlockDashboard';
@@ -100,7 +101,8 @@ const TeacherDashboard = () => {
   };
 
   const handleProfileDialogOpen = () => {
-    // You can implement profile dialog functionality here
+    // Navigate to profile page
+    window.location.href = '/teacher/profile';
     handleProfileMenuClose();
   };
 
@@ -689,7 +691,7 @@ const TeacherDashboard = () => {
               {/* Routes */}
               <Routes>
                 <Route path="/dashboard" element={<TeacherDashboardHome />} />
-                <Route path="/profile" element={<TeacherProfile />} />
+                <Route path="/profile" element={<MyProfile role="teacher" />} />
                 <Route path="/courses" element={<TeacherCourses />} />
                 <Route path="/sections" element={<TeacherSections />} />
                 <Route path="/section-analytics" element={<TeacherSectionAnalytics user={currentUser} token={token} />} />

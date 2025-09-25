@@ -83,6 +83,7 @@ const Sidebar = ({ currentUser, mobileOpen = false, handleDrawerToggle = () => {
   // Different menus based on user role
   const adminMenu = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: 'dashboard', color: theme.palette.primary.main },
+    { text: 'My Profile', icon: <PersonSearchIcon />, path: 'profile', color: theme.palette.secondary.main },
     { text: 'Announcements', icon: <NotificationsActiveIcon />, path: 'announcements', color: theme.palette.primary.dark },
     { text: 'Teachers', icon: <PeopleIcon />, path: 'teachers', color: theme.palette.secondary.main },
     { text: 'Students', icon: <SchoolIcon />, path: 'students', color: theme.palette.primary.light },
@@ -131,6 +132,7 @@ const Sidebar = ({ currentUser, mobileOpen = false, handleDrawerToggle = () => {
   
   const studentMenu = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: 'dashboard', color: theme.palette.primary.main },
+    { text: 'My Profile', icon: <PersonSearchIcon />, path: 'profile', color: theme.palette.secondary.main },
     { text: 'Announcements', icon: <NotificationsActiveIcon />, path: 'announcements', color: theme.palette.primary.dark },
     { text: 'My Courses', icon: <MdClass />, path: 'courses', color: theme.palette.secondary.light },
     { text: 'My Section', icon: <GroupsIcon />, path: 'section', color: theme.palette.primary.light },
@@ -141,6 +143,7 @@ const Sidebar = ({ currentUser, mobileOpen = false, handleDrawerToggle = () => {
   // Dean menu
   const deanMenu = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: 'dashboard', color: theme.palette.primary.main },
+    { text: 'My Profile', icon: <PersonSearchIcon />, path: 'profile', color: theme.palette.secondary.main },
     { text: 'Announcements', icon: <NotificationsActiveIcon />, path: 'announcements', color: theme.palette.primary.dark },
     { text: 'Unlock Requests', icon: <LockOpenIcon />, path: 'unlock-requests', color: theme.palette.status?.error},
     { text: 'School Management', icon: <SupervisorAccountIcon />, path: 'school-management', color: theme.palette.secondary.main },
@@ -154,6 +157,7 @@ const Sidebar = ({ currentUser, mobileOpen = false, handleDrawerToggle = () => {
   // HOD menu
   const hodMenu = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: 'dashboard', color: theme.palette.primary.main },
+    { text: 'My Profile', icon: <PersonSearchIcon />, path: 'profile', color: theme.palette.secondary.main },
     { text: 'Announcements', icon: <NotificationsActiveIcon />, path: 'announcements', color: theme.palette.primary.dark },
     { text: 'Announcement Approvals', icon: <AssignmentIcon />, path: 'announcement-approvals', color: theme.palette.status?.warning},
     { text: 'Video Unlock Requests', icon: <VideoLibraryIcon />, path: 'video-unlock-requests', color: theme.palette.status?.error},
@@ -164,6 +168,13 @@ const Sidebar = ({ currentUser, mobileOpen = false, handleDrawerToggle = () => {
     { text: 'Teachers', icon: <PeopleIcon />, path: 'teachers', color: theme.palette.secondary.main },
     { text: 'Courses', icon: <MdClass />, path: 'courses', color: theme.palette.secondary.light },
     { text: 'Analytics', icon: <BarChartIcon />, path: 'analytics', color: theme.palette.primary.main },
+  ];
+
+  // CC (Course Coordinator) menu
+  const ccMenu = [
+    { text: 'Dashboard', icon: <DashboardIcon />, path: 'dashboard', color: theme.palette.primary.main },
+    { text: 'My Profile', icon: <PersonSearchIcon />, path: 'profile', color: theme.palette.secondary.main },
+    { text: 'Reviews', icon: <AssessmentIcon />, path: 'reviews', color: theme.palette.primary.dark },
   ];
 
   // Select menu based on active role (from context) or fallback to user role
@@ -196,7 +207,12 @@ const Sidebar = ({ currentUser, mobileOpen = false, handleDrawerToggle = () => {
     basePath = '/hod';
     roleName = 'HOD';
     roleColor = theme.palette.roles?.hod || theme.palette.primary.main;
-  } else if (currentRole === 'teacher' || currentRole === 'cc') {
+  } else if (currentRole === 'cc') {
+    menu = ccMenu;
+    basePath = '/cc';
+    roleName = 'Course Coordinator';
+    roleColor = theme.palette.status?.info || theme.palette.primary.main;
+  } else if (currentRole === 'teacher') {
     // Filter teacher menu based on permissions and CC status
     menu = teacherMenu.filter(item => {
       // Special case: Hide CC Management if user is not currently a CC

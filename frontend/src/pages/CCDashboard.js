@@ -6,6 +6,7 @@ import { parseJwt } from '../utils/jwt';
 
 const CCDashboardHome = React.lazy(() => import('./cc/CCDashboardHome'));
 const CCReviews = React.lazy(() => import('./cc/CCReviews'));
+const MyProfile = React.lazy(() => import('./common/MyProfile'));
 
 const CCDashboard = () => {
   const token = localStorage.getItem('token');
@@ -36,6 +37,7 @@ const CCDashboard = () => {
           <Routes>
             <Route path="/dashboard" element={<CCDashboardHome />} />
             <Route path="/reviews" element={<CCReviews />} />
+            <Route path="/profile" element={<MyProfile role="cc" />} />
             <Route path="*" element={<Navigate to="/cc/dashboard" replace />} />
           </Routes>
         </React.Suspense>

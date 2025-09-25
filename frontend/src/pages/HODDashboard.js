@@ -40,6 +40,7 @@ import HODSections from './hod/HODSections';
 import HODAnalytics from './hod/HODAnalytics';
 import HODAnnouncements from './hod/HODAnnouncements';
 import MyTeachingSections from '../components/common/MyTeachingSections';
+import MyProfile from './common/MyProfile';
 
 import HODAnnouncementApproval from '../components/hod/HODAnnouncementApproval';
 import HODQuizManagement from './hod/HODQuizManagement';
@@ -188,7 +189,8 @@ const HODDashboard = () => {
   };
 
   const handleProfileDialogOpen = () => {
-    // You can implement profile dialog functionality here
+    // Navigate to profile page
+    window.location.href = '/hod/profile';
     handleProfileMenuClose();
   };
 
@@ -823,6 +825,7 @@ const HODDashboard = () => {
               <Route path="/cc-management" element={<HODCCManagement />} />
               <Route path="/teaching-sections" element={<MyTeachingSections />} />
               <Route path="/video-unlock-requests" element={<HODVideoUnlockApproval token={token} user={currentUser} />} />
+              <Route path="/profile" element={<MyProfile role="hod" />} />
               <Route path="*" element={<Navigate to="/hod/dashboard" replace />} />
             </Routes>
             </Box>
