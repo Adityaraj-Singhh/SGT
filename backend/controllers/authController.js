@@ -170,7 +170,7 @@ exports.signup = async (req, res) => {
 // Login (all roles)
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, allowUidLogin = true } = req.body;
     
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
@@ -178,8 +178,15 @@ exports.login = async (req, res) => {
     
     // Normalize email (trim whitespace and convert to lowercase)
     const normalizedEmail = email.trim().toLowerCase();
+    const normalizedInput = email.trim();
     
-    const user = await User.findOne({ email: normalizedEmail })
+    let user;
+    
+    // First, try to find admin by email only
+    const adminUser = await User.findOne({ 
+      email: normalizedEmail,
+      role: { $in: ['admin', 'superadmin'] }
+    })
       .populate({
         path: 'roleAssignments.school roleAssignments.schools',
         select: 'name code'
@@ -188,19 +195,48 @@ exports.login = async (req, res) => {
         path: 'roleAssignments.departments',
         select: 'name code school'
       });
+
+    if (adminUser) {
+      // Admin found, use admin user
+      user = adminUser;
+    } else if (allowUidLogin) {
+      // Not admin, search by email OR UID for other roles
+      user = await User.findOne({
+        $or: [
+          { email: normalizedEmail },
+          { regNo: normalizedInput },  // Student UID
+          { teacherId: normalizedInput } // Teacher UID
+        ],
+        role: { $nin: ['admin', 'superadmin'] } // Exclude admin roles from UID login
+      })
+        .populate({
+          path: 'roleAssignments.school roleAssignments.schools',
+          select: 'name code'
+        })
+        .populate({
+          path: 'roleAssignments.departments',
+          select: 'name code school'
+        });
+    } else {
+      // Only allow email-based login
+      user = await User.findOne({
+        email: normalizedEmail,
+        role: { $nin: ['admin', 'superadmin'] }
+      })
+        .populate({
+          path: 'roleAssignments.school roleAssignments.schools',
+          select: 'name code'
+        })
+        .populate({
+          path: 'roleAssignments.departments',
+          select: 'name code school'
+        });
+    }
+    
     if (!user) {
-      // Try a more flexible search if exact match not found
-      const similarEmailUser = await User.findOne({ 
-        email: { $regex: new RegExp(normalizedEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') } 
+      return res.status(400).json({ 
+        message: 'Invalid credentials. Please check your email address' + (allowUidLogin ? ' or UID' : '') + '.' 
       });
-      
-      if (similarEmailUser) {
-        console.log('Found user with similar email during login:', similarEmailUser.email);
-        // Don't suggest the email for security reasons, just use a generic message
-        return res.status(400).json({ message: 'Invalid credentials. Please check your email address.' });
-      }
-      
-      return res.status(400).json({ message: 'Invalid credentials' });
     }
     
     const isMatch = await bcrypt.compare(password, user.password);

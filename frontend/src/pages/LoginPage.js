@@ -51,7 +51,9 @@ const LoginPage = () => {
     setLoading(true);
     
     try {
-      const result = await loginUser(email, password);
+      // For all users: allow both email and UID login
+      // The backend will handle the logic to restrict admin to email-only
+      const result = await loginUser(email, password, true);
       
       if (!result.success) {
         setError(result.error);
@@ -267,7 +269,7 @@ const LoginPage = () => {
               <Typography
                 variant="h4"
                 sx={{
-                  fontWeight: 700,
+                  fontWeight: 750,
                   color: '#1a237e',
                   letterSpacing: 0.5,
                   textAlign: 'center',
@@ -275,7 +277,7 @@ const LoginPage = () => {
                   mb: 1
                 }}
               >
-                University Management
+                University Management System
               </Typography>
               <Typography
                 variant="h6"
@@ -285,7 +287,7 @@ const LoginPage = () => {
                   textAlign: 'center',
                 }}
               >
-                System
+          
               </Typography>
             </Box>
             
@@ -323,7 +325,7 @@ const LoginPage = () => {
                 required
                 autoFocus
                 disabled={loading}
-                placeholder="Enter your email or user ID"
+                placeholder="Enter your email address or user ID"
                 helperText="You can login using either your email address or UID"
                 sx={{
                   mb: 2,

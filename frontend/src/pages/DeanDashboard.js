@@ -42,6 +42,7 @@ import DeanSchoolManagement from './dean/DeanSchoolManagement';
 import DeanSectionAnalytics from './dean/DeanSectionAnalytics';
 import DeanQuizUnlockDashboard from '../components/dean/DeanQuizUnlockDashboard';
 import MyTeachingSections from '../components/common/MyTeachingSections';
+import MyProfile from './common/MyProfile';
 
 const DeanDashboard = () => {
   const token = localStorage.getItem('token');
@@ -185,7 +186,8 @@ const DeanDashboard = () => {
   };
 
   const handleProfileDialogOpen = () => {
-    // You can implement profile dialog functionality here
+    // Navigate to profile page
+    window.location.href = '/dean/profile';
     handleProfileMenuClose();
   };
 
@@ -818,6 +820,7 @@ const DeanDashboard = () => {
                 <Route path="/announcements" element={<AnnouncementManagementPage />} />
                 <Route path="/unlock-requests" element={<DeanQuizUnlockDashboard />} />
                 <Route path="/teaching-sections" element={<MyTeachingSections />} />
+                <Route path="/profile" element={<MyProfile role="dean" />} />
                 <Route path="*" element={<Navigate to="/dean/dashboard" replace />} />
               </Routes>
             </Box>

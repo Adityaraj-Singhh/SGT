@@ -49,6 +49,7 @@ import Analytics from './admin/Analytics';
 import UnlockRequests from './admin/UnlockRequests';
 import UserRoleManagement from './admin/UserRoleManagement';
 import RoleManagement from './admin/RoleManagement';
+import MyProfile from './common/MyProfile';
 import { useLocation } from 'react-router-dom';
 
 const AdminDashboard = () => {
@@ -73,7 +74,8 @@ const AdminDashboard = () => {
   };
 
   const handleProfileDialogOpen = () => {
-    // You can implement profile dialog functionality here
+    // Navigate to profile page
+    window.location.href = '/admin/profile';
     handleProfileMenuClose();
   };
 
@@ -904,6 +906,7 @@ const AdminDashboard = () => {
               <Route path="analytics" element={<AnalyticsDashboard />} />
               <Route path="enhanced-analytics" element={<EnhancedAnalytics />} />
               <Route path="announcements" element={<AnnouncementPage role="admin" />} />
+              <Route path="profile" element={<MyProfile role="admin" />} />
               {currentUser?.role === 'admin' && <Route path="user-roles" element={<UserRoleManagement />} />}
               {currentUser?.role === 'admin' && <Route path="roles" element={<RoleManagement />} />}
               <Route path="*" element={<Navigate to="/admin/dashboard" />} />

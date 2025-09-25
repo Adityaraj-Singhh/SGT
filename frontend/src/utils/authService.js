@@ -83,9 +83,13 @@ const parseJwt = (token) => {
 };
 
 // Login user and set token in localStorage
-export const loginUser = async (email, password) => {
+export const loginUser = async (email, password, allowUidLogin = true) => {
   try {
-    const res = await axios.post('/api/auth/login', { email, password });
+    const res = await axios.post('/api/auth/login', { 
+      email, 
+      password, 
+      allowUidLogin 
+    });
     const { token, user } = res.data;
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));

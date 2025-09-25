@@ -39,6 +39,7 @@ import StudentLiveClassRoom from '../components/student/StudentLiveClassRoom';
 import QuizResults from '../components/student/QuizResults';
 import RecentVideos from '../components/student/RecentVideos';
 import WatchHistory from '../components/student/WatchHistory';
+import MyProfile from './common/MyProfile';
 
 const StudentDashboard = () => {
   const token = localStorage.getItem('token');
@@ -61,7 +62,8 @@ const StudentDashboard = () => {
   };
 
   const handleProfileDialogOpen = () => {
-    // You can implement profile dialog functionality here
+    // Navigate to profile page
+    window.location.href = '/student/profile';
     handleProfileMenuClose();
   };
 
@@ -368,6 +370,7 @@ const StudentDashboard = () => {
             <Route path="/forums/:forumId" element={<StudentForumDetailPage />} />
             <Route path="/unanswered-forums" element={<StudentUnansweredForumsPage />} />
             <Route path="/announcements" element={<AnnouncementPage role="student" />} />
+            <Route path="/profile" element={<MyProfile role="student" />} />
             <Route path="*" element={<Navigate to="/student/dashboard" replace />} />
           </Routes>
           </Box>
